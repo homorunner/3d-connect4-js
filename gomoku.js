@@ -33,10 +33,10 @@ function init() {
 	// world
 
 	var BALL_RADIUS = 2;
-	var sphereG = new THREE.SphereGeometry(BALL_RADIUS, 20, 15);
+	var sphereG = new THREE.SphereGeometry(BALL_RADIUS / 1.2, 20, 15);
 	sphereM = {
 					color: 0xffffff,
-					opacity: 0.01,
+					opacity: 0.1,
 					transparent: true
 				};
 
