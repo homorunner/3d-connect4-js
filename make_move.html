@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>title</title>
+	</head>
+	<body>
+	<script>
+	game_state = {
+		A: [],
+		B: []
+	}
+
+function make_move (m) {
+
+	var mvs = game_state.A.concat(game_state.B);
+	var x = m[0], z = m[1];
+	var maxi;
+	//maxi = maxi || x + '0' + z;
+	for (var i = 0; i < mvs.length; i++) {
+		var this_m = mvs[i];
+		if ((this_m[0] === x) && (this_m[2] === z)) {
+			if ( maxi ){
+				maxi = maxi[1] < this_m[1] ? this_m : maxi;
+			} else {
+				maxi = this_m;
+			}
+		}
+	}
+	if (maxi === undefined) {
+		game_state.A.push(  x + '0' + z );
+		return;
+	}
+	game_state.A.push( '' + x + (parseInt( maxi[1] ) + 1) + z );
+}
+
+for (var x = 0; x < 3; x++) 
+	for(var z = 0; z < 3; z++)
+		for(var n = 0; n < 3; n++)
+			make_move('' + x + z);
+	
+
+		</script>
+	</body>
+</html>
