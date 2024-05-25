@@ -36,7 +36,7 @@ function init() {
 	var sphereG = new THREE.SphereGeometry(BALL_RADIUS, 20, 15);
 	sphereM = {
 					color: 0xffffff,
-					opacity: 0.1,
+					opacity: 0.01,
 					transparent: true
 				};
 
