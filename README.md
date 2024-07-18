@@ -1,4 +1,10 @@
-# 3D Gomoku game
+# 3D Connect4 game
+
+## About
+
+This is a web simulator for the 3d connect4 game. You can use this page to play a local game.
+
+<https://homorunner.github.io/3d-connect4-js/>
 
 ## Rule
 
