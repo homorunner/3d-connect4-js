@@ -17,8 +17,8 @@ var game_state = {
 }
 
 var PLAYERS = {
-	P1_color : 0x333333,
-	P2_color : 0xCCCCCC
+	P1_color : 0xff6b6b,  // Vibrant red
+	P2_color : 0x4ecdc4   // Vibrant teal
 }
 
 function init() {
@@ -29,21 +29,23 @@ function init() {
 	controls = new THREE.OrbitControls(camera);
 	controls.addEventListener('change', render);
 	scene = new THREE.Scene();
-	scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+	scene.fog = new THREE.FogExp2(0x1e3c72, 0.001);
 	// world
 
 	var BALL_RADIUS = 2;
-	var sphereG = new THREE.SphereGeometry(BALL_RADIUS / 1.2, 20, 15);
+	var sphereG = new THREE.SphereGeometry(BALL_RADIUS / 1.2, 32, 24);
 	sphereM = {
 					color: 0xffffff,
-					opacity: 0.1,
-					transparent: true
+					opacity: 0.15,
+					transparent: true,
+					shininess: 100,
+					specular: 0x222222
 				};
 
 	for (var x = 0; x < 5; x++)
 		for (var y = 0; y < 5; y++)
 			for (var z = 0; z < 5; z++) {
-				var sphere = new THREE.Mesh(sphereG, new THREE.MeshLambertMaterial(sphereM));
+				var sphere = new THREE.Mesh(sphereG, new THREE.MeshPhongMaterial(sphereM));
 				sphere.position.x = 2 * BALL_RADIUS * x - 3 * BALL_RADIUS;
 				sphere.position.y = 2 * BALL_RADIUS * y - 3 * BALL_RADIUS;
 				sphere.position.z = 2 * BALL_RADIUS * z - 3 * BALL_RADIUS;
@@ -53,10 +55,10 @@ function init() {
 			}
 
 	var cylG = new THREE.CylinderGeometry(BALL_RADIUS/3,BALL_RADIUS/3,BALL_RADIUS*12)
-	var cylM = {color: 0x77BB77, opacity: 0.1, transparent: true};
+	var cylM = {color: 0x00d4ff, opacity: 0.2, transparent: true, shininess: 50};
 	for (var x = 0; x < 5; x++)
 		for (var z = 0; z < 5; z++) {
-			var cyl = new THREE.Mesh(cylG, new THREE.MeshLambertMaterial(cylM));
+			var cyl = new THREE.Mesh(cylG, new THREE.MeshPhongMaterial(cylM));
 			cyl.position.x = 2 * BALL_RADIUS * x - 3 * BALL_RADIUS;
 			cyl.position.y = 0;
 			cyl.position.z = 2 * BALL_RADIUS * z - 3 * BALL_RADIUS;
@@ -66,19 +68,29 @@ function init() {
 
 	var pSz = 10*BALL_RADIUS;		
 	var plateG = new THREE.CubeGeometry(pSz, pSz, BALL_RADIUS);
-	var plateM = new THREE.Mesh(plateG, new THREE.MeshLambertMaterial({color: 0x77BB77}));
+	var plateM = new THREE.Mesh(plateG, new THREE.MeshPhongMaterial({
+		color: 0x2a5298, 
+		shininess: 30,
+		specular: 0x111111
+	}));
 	plateM.rotation.x = 90*Math.PI/180
 	plateM.position.y = -5*BALL_RADIUS;
 	scene.add(plateM);
 	// lights
-	light = new THREE.DirectionalLight(0xffffff);
-	light.position.set(1, 1, 1);
-	scene.add(light);
-	light = new THREE.DirectionalLight(0x665588);
-	light.position.set(-1, -1, -1);
-	scene.add(light);
-	light = new THREE.AmbientLight(0x333333);
-	scene.add(light);
+	var mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+	mainLight.position.set(1, 1, 1);
+	scene.add(mainLight);
+	
+	var fillLight = new THREE.DirectionalLight(0x4ecdc4, 0.3);
+	fillLight.position.set(-1, -1, -1);
+	scene.add(fillLight);
+	
+	var ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+	scene.add(ambientLight);
+	
+	var pointLight = new THREE.PointLight(0x00d4ff, 0.5, 100);
+	pointLight.position.set(0, 20, 0);
+	scene.add(pointLight);
 	// renderer
 	renderer = new THREE.WebGLRenderer({
 		antialias: true
@@ -91,6 +103,7 @@ function init() {
 	stats.domElement.style.position = 'absolute';
 	stats.domElement.style.top = '0px';
 	stats.domElement.style.zIndex = 100;
+	stats.domElement.id = 'stats';
 	container.appendChild(stats.domElement);
 	//
 	window.addEventListener('resize', onWindowResize, false);
@@ -148,6 +161,17 @@ function draw_balls () {
 
 var current_player = 0
 
+function updatePlayerDisplay() {
+	var playerElement = document.getElementById('current-player');
+	if (current_player % 2 === 0) {
+		playerElement.textContent = "Player 1's Turn";
+		playerElement.className = 'player1';
+	} else {
+		playerElement.textContent = "Player 2's Turn";
+		playerElement.className = 'player2';
+	}
+}
+
 function onClick(e) {
 	function make_move(m) {
 
@@ -181,6 +205,7 @@ function onClick(e) {
 
 		draw_balls();
 		current_player++;
+		updatePlayerDisplay();
 	}
 
 
@@ -227,14 +252,16 @@ function xSect (over, out) {
 
 function over (o) {
 	var mat = o.material;
-	mat.opacity = 1;
-	mat.transparent = false;
-	mat.color.setRGB(1,0,0);
+	mat.opacity = 0.8;
+	mat.transparent = true;
+	mat.color.setRGB(1, 0.8, 0);
+	mat.emissive.setRGB(0.2, 0.1, 0);
 }
 
 function out (o) {
 	var mat = o.material;
-	mat.opacity = 0.1;
+	mat.opacity = 0.2;
 	mat.transparent = true;
-	mat.color.setRGB(0.5,0.8,0.5);
+	mat.color.setRGB(0, 0.83, 1);
+	mat.emissive.setRGB(0, 0, 0);
 }
