@@ -1,32 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - orbit controls</title>
+		<title>3D Connect 4 - Interactive Game</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+			
 			body {
-				color: #000;
-				font-family:Monospace;
-				font-size:13px;
-				text-align:center;
-				font-weight: bold;
-
-				background-color: #fff;
+				color: #fff;
+				font-family: 'Orbitron', monospace;
+				font-size: 14px;
+				text-align: center;
+				font-weight: 400;
+				background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
 				margin: 0px;
 				overflow: hidden;
+				position: relative;
+			}
+
+			#container {
+				position: relative;
+				width: 100%;
+				height: 100vh;
 			}
 
 			#info {
-				color:#000;
 				position: absolute;
-				top: 0px; width: 100%;
-				padding: 5px;
-
+				top: 20px;
+				left: 20px;
+				background: rgba(0, 0, 0, 0.7);
+				padding: 15px 20px;
+				border-radius: 10px;
+				backdrop-filter: blur(10px);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				z-index: 1000;
 			}
 
+			#title {
+				font-size: 24px;
+				font-weight: 900;
+				color: #00d4ff;
+				margin-bottom: 10px;
+				text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+			}
+
+			#instructions {
+				font-size: 12px;
+				color: #ccc;
+				line-height: 1.4;
+				margin-bottom: 10px;
+			}
+
+			#current-player {
+				font-size: 14px;
+				font-weight: 700;
+				margin-top: 10px;
+				padding: 8px 12px;
+				border-radius: 5px;
+				background: rgba(255, 255, 255, 0.1);
+			}
+
+			.player1 { color: #ff6b6b; }
+			.player2 { color: #4ecdc4; }
+
 			a {
-				color: red;
+				color: #00d4ff;
+				text-decoration: none;
+				font-weight: 700;
+			}
+
+			a:hover {
+				color: #fff;
+				text-shadow: 0 0 5px rgba(0, 212, 255, 0.8);
+			}
+
+			#stats {
+				position: absolute !important;
+				top: 20px !important;
+				right: 20px !important;
+				left: auto !important;
+				background: rgba(0, 0, 0, 0.7) !important;
+				border-radius: 5px !important;
+				padding: 5px !important;
+				border: 1px solid rgba(255, 255, 255, 0.1) !important;
 			}
 		</style>
 	</head>
@@ -34,7 +91,16 @@
 	<body>
 		<div id="container"></div>
 		<div id="info">
-			<a href="http://threejs.org" target="_blank">three.js</a>
+			<div id="title">3D Connect 4</div>
+			<div id="instructions">
+				Click on columns to drop pieces<br>
+				Drag to rotate • Scroll to zoom<br>
+				Get 4 in a row to win!
+			</div>
+			<div id="current-player" class="player1">Player 1's Turn</div>
+			<div style="margin-top: 15px; font-size: 11px;">
+				Powered by <a href="http://threejs.org" target="_blank">three.js</a>
+			</div>
 		</div>
 
 		<script src="three.min.js"></script>
